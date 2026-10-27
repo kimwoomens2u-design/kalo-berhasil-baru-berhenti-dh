@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AU - Jiaz x Cayra</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: "SF Pro Display", "Segoe UI", Arial, sans-serif;
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .phone {
+      width: 390px;
+      height: 820px;
+      background: linear-gradient(to bottom, #efefef, #f8f8f8 20%, #f5f5f5);
+      border-radius: 36px;
+      border: 3px solid #1f2937;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 30px;
+      background: #111827;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    .status-bar {
+      height: 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px 0 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+      position: relative;
+      z-index: 3;
+    }
+
+    .status-left { letter-spacing: 0.5px; }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .signal {
+      display: inline-flex;
+      align-items: end;
+      gap: 3px;
+      height: 14px;
+    }
+    .signal span {
+      display: inline-block;
+      width: 4px;
+      border-radius: 2px;
+      background: #111827;
+    }
+    .signal span:nth-child(1) { height: 4px; opacity: 0.5; }
+    .signal span:nth-child(2) { height: 7px; opacity: 0.65; }
+    .signal span:nth-child(3) { height: 10px; opacity: 0.8; }
+    .signal span:nth-child(4) { height: 13px; }
+
+    .battery {
+      width: 24px;
+      height: 12px;
+      border: 1.5px solid #111827;
+      border-radius: 3px;
+      position: relative;
+      display: inline-block;
+    }
+    .battery::before {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 2px;
+      width: 2px;
+      height: 6px;
+      background: #111827;
+      border-radius: 1px;
+    }
+    .battery::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 14px;
+      height: 6px;
+      background: #111827;
+      border-radius: 2px;
+    }
+
+    .header {
+      height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px 12px 16px;
+      background: rgba(255,255,255,0.75);
+      border-bottom: 1px solid rgba(17,24,39,0.06);
+      position: relative;
+      z-index: 2;
+    }
+
+    .left-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f9a8d4, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
+      font-size: 12px;
+    }
+
+    .name-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .online {
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .icons {
+      display: flex;
+      gap: 14px;
+      font-size: 22px;
+      color: #1f2937;
+    }
+
+    .chat-area {
+      height: 470px;
+      overflow-y: auto;
+      padding: 18px 14px 12px;
+      background:
+        linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1)),
+        radial-gradient(circle at top left, rgba(168,85,247,0.08), transparent 20%),
+        radial-gradient(circle at bottom right, rgba(59,130,246,0.08), transparent 24%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bubble {
+      max-width: 76%;
+      padding: 12px 14px;
+      border-radius: 20px;
+      line-height: 1.46;
+      font-size: 15px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      animation: fadeUp 0.25s ease;
+      word-wrap: break-word;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      border-bottom-right-radius: 8px;
+      margin-left: auto;
+    }
+
+    .bubble.bot {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.96);
+      color: #111827;
+      border-bottom-left-radius: 8px;
+      border: 1px solid rgba(17,24,39,0.05);
+    }
+
+    .typing {
+      display: none;
+      align-self: flex-start;
+      background: rgba(255,255,255,0.9);
+      border-radius: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(17,24,39,0.06);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .typing.show {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #9ca3af;
+      animation: blink 1s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.15s; }
+    .dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.35; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    .choices {
+      background: rgba(255,255,255,0.7);
+      border-top: 1px solid rgba(17,24,39,0.08);
+      padding: 10px 12px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .choice {
+      background: #fff;
+      border: 1px solid rgba(17,24,39,0.08);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      color: #1f2937;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      transition: transform 0.15s ease;
+    }
+
+    .choice:hover {
+      transform: translateY(-1px);
+    }
+
+    .composer {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 18px;
+      background: rgba(255,255,255,0.76);
+      border-top: 1px solid rgba(17,24,39,0.08);
+    }
+
+    .input-wrap {
+      flex: 1;
+      background: white;
+      border-radius: 999px;
+      border: 1px solid rgba(17,24,39,0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 15px;
+      padding: 14px 0;
+      color: #111827;
+    }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #2563eb);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(37,99,235,0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+
+    <div class="status-bar">
+      <div class="status-left">9:41</div>
+      <div class="status-icons">
+        <div class="signal">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>📶</div>
+        <div class="battery"></div>
+      </div>
+    </div>
+
+    <div class="header">
+      <div class="left-head">
+        <div class="avatar">J</div>
+        <div class="name-box">
+          <div class="name">mnyt🐵</div>
+          <div class="online">Online</div>
+        </div>
+      </div>
+      <div class="icons">
+        <span>📞</span>
+        <span>📹</span>
+        <span>⋯</span>
+      </div>
+    </div>
+
+    <div class="chat-area" id="chatArea"></div>
+
+    <div class="choices" id="choices"></div>
+
+    <div class="composer">
+      <div class="input-wrap">
+        <input id="messageInput" type="text" placeholder="Ketik sesuatu..." />
+      </div>
+      <button class="send-btn" id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+    const chatArea = document.getElementById("chatArea");
+    const input = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const choices = document.getElementById("choices");
+
+    const optionMap = {
+      intro: [
+        "Lo lagi ngapain?",
+        "Jangan main-main.",
+        "Monyet lo."
+      ],
+      main: [
+        "Mama lo ngapain?",
+        "Gue bukan pacar lo.",
+        "Lo gila ya?"
+      ],
+      chaos: [
+        "Jangan bikin gue naik darah.",
+        "Bawa Mama lo pergi.",
+        "Gue mau jelasin."
+      ],
+      final: [
+        "Lo sebenernya kenapa?",
+        "Seriusan gue nggak mau ini.",
+        "Lo nyebelin banget."
+      ]
+    };
+
+    function addBubble(sender, text) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble " + sender;
+      bubble.textContent = text;
+      chatArea.appendChild(bubble);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function typing() {
+      const typingBox = document.createElement("div");
+      typingBox.className = "typing show";
+      typingBox.id = "typingBox";
+
+      const d1 = document.createElement("span");
+      d1.className = "dot";
+      const d2 = document.createElement("span");
+      d2.className = "dot";
+      const d3 = document.createElement("span");
+      d3.className = "dot";
+
+      typingBox.append(d1, d2, d3);
+      chatArea.appendChild(typingBox);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function removeTyping() {
+      const t = document.getElementById("typingBox");
+      if (t) t.remove();
+    }
+
+    function renderChoices(list) {
+      choices.innerHTML = "";
+      list.forEach((label) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = label;
+        btn.addEventListener("click", () => {
+          addBubble("user", label);
+          processChoice(label);
+        });
+        choices.appendChild(btn);
+      });
+    }
+
+    function processChoice(label) {
+      const text = label.toLowerCase();
+
+      if (text.includes("ngapain") || text.includes("gila") || text.includes("monyet")) {
+        setTimeout(() => {
+          addBubble("bot", "Lo pikir gue takut? Gue cuma ngikutin perintah Mama, bukan karena gue suka ngerecokin lo.");
+          addBubble("bot", "Tapi lo sendiri kenapa muka lo merah banget tiap gue deketin?");
+          renderChoices(optionMap.main);
+        }, 700);
+      } else if (text.includes("mama") || text.includes("jelasin") || text.includes("bukan pacar")) {
+        setTimeout(() => {
+          addBubble("bot", "Mama gue nyuruh gue jemput lo. Gue ditawarin amanat, terus gue panik. Itu doang.");
+          addBubble("bot", "Kalo lo mau nyalahin gue, nyalahin aja. Tapi jangan ngaku lo nggak pernah kepikiran gue.");
+          renderChoices(optionMap.chaos);
+        }, 700);
+      } else if (text.includes("bawa") || text.includes("pergi")) {
+        setTimeout(() => {
+          addBubble("bot", "Ya aduk biaya, aduk drama, aduk kegeeran lo. Gue cuma mau semuanya selesai, bukan buat main-main.");
+          addBubble("bot", "Lo tuh orang yang paling gampang naik darah padahal cuma gara-gara gue nekat klien-nya rupanya.");
+          renderChoices(optionMap.final);
+        }, 700);
+      } else {
+        setTimeout(() => {
+          addBubble("bot", "Lo jangan nganggap gue pahlawan. Gue cuma lagi nyari jalan keluar dari omongan Mama yang nggak ada hentinya.");
+          renderChoices(optionMap.final);
+        }, 700);
+      }
+    }
+
+    function handleReply(value) {
+      const txt = value.toLowerCase();
+
+      if (txt.includes("monyet") || txt.includes("bego") || txt.includes("anjing")) {
+        addBubble("bot", "Bodo amat, lo emang paling gampang nyebut gue monyet tapi tiap gue nyerang balik lo malah ikut panas.");
+        return;
+      }
+
+      if (txt.includes("mama") || txt.includes("victoria") || txt.includes("mom")) {
+        addBubble("bot", "Mama gue itu udah ngatur segalanya. Gue capek, lo juga capek, tapi kita berdua terjebak di drama yang bukan kita minta.");
+        return;
+      }
+
+      if (txt.includes("pacar") || txt.includes("suka") || txt.includes("sayang")) {
+        addBubble("bot", "Gue bukan pacar lo, dan kita berdua juga tau itu. Yang ada cuma situasi yang nyuruh kita pura-pura.");
+        return;
+      }
+
+      if (txt.includes("gila") || txt.includes("nyebelin") || txt.includes("sial")) {
+        addBubble("bot", "Lo juga nggak kalah nyebelin. Cuma gue lebih pinter nyembunyiin bete dari lo.");
+        return;
+      }
+
+      addBubble("bot", "Gue nggak minta lo ngerti. Gue cuma minta lo berhenti jadi orang paling gampang naik darah di dunia.");
+    }
+
+    function sendManualMessage() {
+      const val = input.value.trim();
+      if (!val) return;
+
+      addBubble("user", val);
+      input.value = "";
+
+      typing();
+      setTimeout(() => {
+        removeTyping();
+        handleReply(val);
+      }, 700);
+    }
+
+    sendBtn.addEventListener("click", sendManualMessage);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendManualMessage();
+    });
+
+    function init() {
+      addBubble("bot", "woy");
+      addBubble("bot", "WOYYYYYYYYY");
+      addBubble("bot", "gue udah di jalan, lo masih ngedumel di HP atau udah mulai ngatain gue?");
+      renderChoices(optionMap.intro);
+    }
+
+    init();
+  </script>
+</body>
+</html>
